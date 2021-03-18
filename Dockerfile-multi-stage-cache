@@ -1,0 +1,13 @@
+from maven:3-openjdk-16 as build
+
+COPY . /opt/app/
+WORKDIR /opt/app
+# changed after the intruduction of this: https://github.com/moby/moby/issues/32507
+# documentation here: https://docs.docker.com/develop/develop-images/build_enhancements/
+RUN --mount=type=cache,target=/root/.m2/repository mvn clean package
+
+from openjdk:16-jdk-alpine
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring:spring
+COPY --from=build /opt/app/target/*.jar /opt/app.jar
+CMD java -jar /opt/app.jar

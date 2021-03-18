@@ -1,0 +1,11 @@
+from maven:3-openjdk-16 as build
+
+COPY . /opt/app/
+WORKDIR /opt/app
+RUN mvn clean package
+
+from openjdk:16-jdk-alpine
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring:spring
+COPY --from=build /opt/app/target/*.jar /opt/app.jar
+CMD java -jar /opt/app.jar

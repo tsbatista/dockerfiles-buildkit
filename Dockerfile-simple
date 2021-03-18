@@ -1,0 +1,5 @@
+from openjdk:16-jdk-alpine
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring:spring
+COPY target/*.jar /opt/app.jar
+CMD java -jar /opt/app.jar
